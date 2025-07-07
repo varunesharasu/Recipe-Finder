@@ -12,7 +12,7 @@
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 //     try {
-//       await axios.post('http://localhost:5000/api/verify-otp', { email, otp });
+//       await axios.post('https://recipe-finder-x2s0.onrender.com/api/verify-otp', { email, otp });
 //       navigate('/login'); // Redirect to login after successful OTP verification
 //     } catch (err) {
 //       setError(err.response.data.message);
@@ -73,7 +73,7 @@ const OtpVerification = () => {
     setError("")
 
     try {
-      await axios.post("http://localhost:5000/api/verify-otp", { email, otp })
+      await axios.post("https://recipe-finder-x2s0.onrender.com/api/verify-otp", { email, otp })
       addNotification("Email verified successfully! You can now login.", "success")
       navigate("/login")
     } catch (err) {

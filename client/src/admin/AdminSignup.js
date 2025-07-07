@@ -30,7 +30,7 @@ const AdminSignup = () => {
     setMessage("")
 
     try {
-      const res = await axios.post("http://localhost:5000/admin/signup", formData)
+      const res = await axios.post("https://recipe-finder-x2s0.onrender.com/admin/signup", formData)
       setMessage("Admin account created successfully! Redirecting to login...")
 
       // Auto-redirect to admin login after 2 seconds

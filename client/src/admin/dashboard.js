@@ -48,12 +48,12 @@ const RecipeForm = () => {
   const loadDashboardData = async () => {
     try {
       // Load recipes
-      const recipesRes = await axios.get("http://localhost:5000/recipes")
+      const recipesRes = await axios.get("https://recipe-finder-x2s0.onrender.com/recipes")
       setRecipes(recipesRes.data)
 
       // Load users (you'll need to create this endpoint)
       try {
-        const usersRes = await axios.get("http://localhost:5000/admin/users")
+        const usersRes = await axios.get("https://recipe-finder-x2s0.onrender.com/admin/users")
         setUsers(usersRes.data)
       } catch (err) {
         console.log("Users endpoint not available")
@@ -108,7 +108,7 @@ const RecipeForm = () => {
     setMessage("")
 
     try {
-      const res = await axios.post("http://localhost:5000/recipes", formData)
+      const res = await axios.post("https://recipe-finder-x2s0.onrender.com/recipes", formData)
       setMessage("Recipe created successfully!")
       setFormData({
         label: "",
@@ -129,7 +129,7 @@ const RecipeForm = () => {
   const handleDeleteRecipe = async (recipeId) => {
     if (window.confirm("Are you sure you want to delete this recipe?")) {
       try {
-        await axios.delete(`http://localhost:5000/recipes/${recipeId}`)
+        await axios.delete(`https://recipe-finder-x2s0.onrender.com/recipes/${recipeId}`)
         setMessage("Recipe deleted successfully!")
         loadDashboardData()
       } catch (error) {

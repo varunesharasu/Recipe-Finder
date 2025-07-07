@@ -13,7 +13,7 @@
 //   const handleLogin = async (e) => {
 //     e.preventDefault();
 //     try {
-//       const response = await axios.post('http://localhost:5000/api/login', { identifier, password });
+//       const response = await axios.post('https://recipe-finder-x2s0.onrender.com/api/login', { identifier, password });
 //       localStorage.setItem('user', JSON.stringify(response.data.user)); 
 //       navigate('/search'); 
       
@@ -78,7 +78,7 @@ const Login = () => {
     setError("")
 
     try {
-      const response = await axios.post("http://localhost:5000/api/login", { identifier, password })
+      const response = await axios.post("https://recipe-finder-x2s0.onrender.com/api/login", { identifier, password })
       localStorage.setItem("user", JSON.stringify(response.data.user))
       addNotification("Welcome back! Login successful.", "success")
       navigate("/search")

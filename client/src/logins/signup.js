@@ -13,7 +13,7 @@
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 //     try {
-//       await axios.post('http://localhost:5000/api/signup', { username, email, password });
+//       await axios.post('https://recipe-finder-x2s0.onrender.com/api/signup', { username, email, password });
 //       navigate('/otp', { state: { email } }); // Pass email to OTP verification
 //     } catch (err) {
 //       setError(err.response.data.message);
@@ -79,7 +79,7 @@ const Signup = () => {
     setError("")
 
     try {
-      await axios.post("http://localhost:5000/api/signup", { username, email, password })
+      await axios.post("https://recipe-finder-x2s0.onrender.com/api/signup", { username, email, password })
       addNotification("Account created successfully! Please verify your email.", "success")
       navigate("/otp", { state: { email } })
     } catch (err) {

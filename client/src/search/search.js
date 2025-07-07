@@ -41,7 +41,7 @@ const Search = () => {
       }))
 
       // Fetch MongoDB recipes with a query filter
-      const response = await axios.get(`http://localhost:5000/recipes`, {
+      const response = await axios.get(`https://recipe-finder-x2s0.onrender.com/recipes`, {
         params: { label: searchQuery },
       })
       const mongoData = response.data.map((recipe) => ({
