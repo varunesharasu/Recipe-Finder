@@ -27,8 +27,9 @@ Recipe Finder is a web application that allows users to discover and search for 
 
 ## Demo
 
-<!-- Optionally add a screenshot or link to a live demo -->
-<!-- ![App Screenshot](public/screenshot.png) -->
+![Home Page](./client/public/Screenshot%20(229).png)
+![Search Page](./client/public/Screenshot%20(230).png)
+
 [Live Demo](https://culinary-finder.vercel.app/)
 
 ## Technologies Used
