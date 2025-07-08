@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import RecipeCard from "./components/RecipeCard"
-import { fetchRecipes } from "./components/api/api"
+import { fetchRecipesWithFilters } from "./components/api/api"
 import axios from "axios"
+import { useNotification } from "../components/NotificationContext"
 import "./components/styles.css"
 
 const Search = () => {
@@ -13,7 +14,9 @@ const Search = () => {
   const [query, setQuery] = useState("")
   const [user, setUser] = useState(null)
   const [activeFilter, setActiveFilter] = useState("all")
+  const [hasSearched, setHasSearched] = useState(false)
   const navigate = useNavigate()
+  const { addNotification } = useNotification()
 
   useEffect(() => {
     const userData = localStorage.getItem("user")
@@ -24,40 +27,98 @@ const Search = () => {
     setUser(JSON.parse(userData))
   }, [navigate])
 
-  const handleSearch = async (searchQuery) => {
-    if (!searchQuery.trim()) return
+  const handleSearch = async (searchQuery, filter = "all") => {
+    if (!searchQuery.trim()) {
+      addNotification("Please enter a search term", "error")
+      return
+    }
 
     setLoading(true)
+    setHasSearched(true)
+
     try {
-      // Fetch API recipes (external)
-      const data = await fetchRecipes(searchQuery)
-      const apiRecipes = data.hits.map((hit) => ({
-        uri: hit.recipe.uri,
-        label: hit.recipe.label,
-        image: hit.recipe.image,
-        calories: hit.recipe.calories,
-        totalTime: hit.recipe.totalTime,
-        ingredients: hit.recipe.ingredients.map((i) => i.text),
-      }))
+      let combinedRecipes = []
 
-      // Fetch MongoDB recipes with a query filter
-      const response = await axios.get(`https://recipe-finder-x2s0.onrender.com/recipes`, {
-        params: { label: searchQuery },
-      })
-      const mongoData = response.data.map((recipe) => ({
-        _id: recipe._id,
-        label: recipe.label,
-        image: recipe.image,
-        calories: recipe.calories,
-        totalTime: recipe.totalTime,
-        ingredients: recipe.ingredients,
-      }))
+      // Fetch MongoDB recipes first
+      try {
+        const response = await axios.get(`https://recipe-finder-x2s0.onrender.com/recipes`, {
+          params: { label: searchQuery },
+        })
+        const mongoData = response.data.map((recipe) => ({
+          _id: recipe._id,
+          uri: `mongodb_${recipe._id}`,
+          label: recipe.label,
+          image: recipe.image,
+          calories: recipe.calories,
+          totalTime: recipe.totalTime,
+          ingredients: recipe.ingredients,
+          servings: recipe.servings || 4,
+          source: "mongodb",
+        }))
+        combinedRecipes = [...mongoData]
+        console.log("MongoDB recipes found:", mongoData.length)
+      } catch (mongoError) {
+        console.log("MongoDB search failed:", mongoError.message)
+      }
 
-      // Combine both MongoDB and API recipes
-      const combinedRecipes = [...mongoData, ...apiRecipes]
+      // Fetch API recipes with filters
+      try {
+        const filters = {}
+
+        // Apply filters based on active filter
+        switch (filter) {
+          case "vegetarian":
+            filters.diet = "vegetarian"
+            break
+          case "healthy":
+            filters.health = "low-sodium"
+            break
+          case "quick":
+            filters.time = "1-30"
+            break
+          case "desserts":
+            // For desserts, we'll search for dessert-related terms
+            searchQuery = searchQuery.includes("dessert") ? searchQuery : `${searchQuery} dessert`
+            break
+          default:
+            // No additional filters for "all"
+            break
+        }
+
+        const data = await fetchRecipesWithFilters(searchQuery, filters)
+        console.log("API Response:", data)
+
+        if (data && data.hits && data.hits.length > 0) {
+          const apiRecipes = data.hits.map((hit, index) => ({
+            uri: hit.recipe.uri || `api_${index}`,
+            label: hit.recipe.label,
+            image: hit.recipe.image,
+            calories: Math.round(hit.recipe.calories),
+            totalTime: hit.recipe.totalTime || 30,
+            ingredients: hit.recipe.ingredients ? hit.recipe.ingredients.map((i) => i.text) : [],
+            servings: hit.recipe.yield || 4,
+            source: "api",
+          }))
+          combinedRecipes = [...combinedRecipes, ...apiRecipes]
+          console.log("API recipes found:", apiRecipes.length)
+        }
+      } catch (apiError) {
+        console.log("API search failed:", apiError.message)
+        addNotification("External recipe search temporarily unavailable", "warning")
+      }
+
+      console.log("Total recipes found:", combinedRecipes.length)
       setRecipes(combinedRecipes)
+
+      if (combinedRecipes.length === 0) {
+        addNotification("No recipes found. Try different keywords.", "info")
+      } else {
+        addNotification(`Found ${combinedRecipes.length} recipes!`, "success")
+      }
     } catch (error) {
-      console.error("Error fetching recipes:", error)
+      console.error("Search error:", error)
+      addNotification("Search failed. Please try again.", "error")
+      setRecipes([])
     } finally {
       setLoading(false)
     }
@@ -65,13 +126,22 @@ const Search = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    handleSearch(query)
+    handleSearch(query, activeFilter)
   }
 
   const handleFilterClick = (filter) => {
     setActiveFilter(filter)
-    // Add filter logic here based on the filter type
+    if (hasSearched && query.trim()) {
+      handleSearch(query, filter)
+    }
   }
+
+  // Load some default recipes on component mount
+  useEffect(() => {
+    if (user && !hasSearched) {
+      handleSearch("chicken", "all")
+    }
+  }, [user])
 
   if (!user) return null
 
@@ -165,7 +235,7 @@ const Search = () => {
                 <RecipeCard key={recipe.uri || recipe._id || index} recipe={recipe} delay={`${index * 0.1}s`} />
               ))}
             </div>
-          ) : query ? (
+          ) : hasSearched ? (
             <div className="rf-empty-state">
               <svg className="rf-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
@@ -173,7 +243,7 @@ const Search = () => {
                 <path d="m16 10-4 4-4-4" />
               </svg>
               <h3 className="rf-empty-title">No recipes found</h3>
-              <p className="rf-empty-description">Try searching with different keywords</p>
+              <p className="rf-empty-description">Try searching with different keywords or filters</p>
             </div>
           ) : (
             <div className="rf-empty-state">
@@ -192,4 +262,3 @@ const Search = () => {
 }
 
 export default Search
-
