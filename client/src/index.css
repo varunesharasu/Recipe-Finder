@@ -468,3 +468,42 @@ html {
     left: 0.5rem;
   }
 }
+
+/* CountUp Animation Styles */
+.count-up-text {
+  display: inline-block;
+  font-weight: inherit;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+/* Enhanced stat number styling for better animation visibility */
+.rf-stat-number {
+  font-size: 3rem;
+  font-weight: 800;
+  background: var(--rf-gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+  line-height: 1;
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive adjustments for count animation */
+@media (max-width: 768px) {
+  .rf-stat-number {
+    font-size: 2.5rem;
+    min-height: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .rf-stat-number {
+    font-size: 2rem;
+    min-height: 2rem;
+  }
+}
