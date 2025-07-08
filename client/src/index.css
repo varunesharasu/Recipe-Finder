@@ -409,63 +409,184 @@ html {
   box-shadow: var(--rf-shadow-sm);
 }
 
-/* Notification Styles */
-.rf-notification {
+/* Enhanced Notification Styles */
+.rf-notifications-container {
   position: fixed;
   top: 1rem;
   right: 1rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 400px;
+  width: 100%;
+  pointer-events: none;
+}
+
+.rf-notification {
+  pointer-events: auto;
   background: var(--rf-bg-card);
   border: 1px solid var(--rf-border-light);
-  border-radius: var(--rf-radius-lg);
-  padding: 1rem;
-  box-shadow: var(--rf-shadow-lg);
-  z-index: 1000;
-  animation: rf-slideInRight 0.3s ease-out;
+  border-radius: var(--rf-radius-xl);
+  box-shadow: var(--rf-shadow-2xl);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  overflow: hidden;
+  position: relative;
+  animation: rf-slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-origin: right center;
+}
+
+.rf-notification::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--rf-gradient-primary);
+  animation: rf-shimmer 2s ease-in-out infinite;
+}
+
+.rf-notification-success::before {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+}
+
+.rf-notification-error::before {
+  background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+}
+
+.rf-notification-warning::before {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+}
+
+.rf-notification-info::before {
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+}
+
+.rf-notification-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  position: relative;
+}
+
+.rf-notification-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.125rem;
+}
+
+.rf-notification-success .rf-notification-icon {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.rf-notification-error .rf-notification-icon {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.rf-notification-warning .rf-notification-icon {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.rf-notification-info .rf-notification-icon {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
+.rf-notification-message {
+  flex: 1;
+  color: var(--rf-text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.rf-notification-close {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  color: var(--rf-text-tertiary);
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--rf-duration-normal) ease;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.rf-notification-close:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--rf-text-primary);
+  transform: scale(1.1);
+}
+
+.rf-notification-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: rgba(0, 0, 0, 0.1);
+  animation: rf-notificationProgress 5s linear;
+}
+
+.rf-notification-success .rf-notification-progress {
+  background: #10b981;
+}
+
+.rf-notification-error .rf-notification-progress {
+  background: #ef4444;
+}
+
+.rf-notification-warning .rf-notification-progress {
+  background: #f59e0b;
+}
+
+.rf-notification-info .rf-notification-progress {
+  background: #3b82f6;
 }
 
 @keyframes rf-slideInRight {
-  from {
+  0% {
     opacity: 0;
-    transform: translateX(100%);
+    transform: translateX(100%) scale(0.8);
   }
-  to {
+  100% {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
   }
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .rf-btn {
-    padding: 0.625rem 1.25rem;
-    font-size: 0.8rem;
+@keyframes rf-shimmer {
+  0%,
+  100% {
+    opacity: 0.5;
   }
-
-  .rf-btn-lg {
-    padding: 0.875rem 1.75rem;
-    font-size: 0.9rem;
-  }
-
-  .rf-card {
-    border-radius: var(--rf-radius-lg);
-  }
-
-  .rf-input {
-    padding: 0.75rem 0.875rem;
-    font-size: 0.8rem;
+  50% {
+    opacity: 1;
   }
 }
 
-@media (max-width: 480px) {
-  .rf-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
+@keyframes rf-notificationProgress {
+  0% {
+    width: 100%;
   }
-
-  .rf-notification {
-    top: 0.5rem;
-    right: 0.5rem;
-    left: 0.5rem;
+  100% {
+    width: 0%;
   }
 }
 
@@ -493,8 +614,42 @@ html {
   justify-content: center;
 }
 
-/* Responsive adjustments for count animation */
+/* Responsive Design */
 @media (max-width: 768px) {
+  .rf-btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.8rem;
+  }
+
+  .rf-btn-lg {
+    padding: 0.875rem 1.75rem;
+    font-size: 0.9rem;
+  }
+
+  .rf-card {
+    border-radius: var(--rf-radius-lg);
+  }
+
+  .rf-input {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.8rem;
+  }
+
+  .rf-notifications-container {
+    top: 0.75rem;
+    right: 0.75rem;
+    left: 0.75rem;
+    max-width: none;
+  }
+
+  .rf-notification-content {
+    padding: 0.875rem 1rem;
+  }
+
+  .rf-notification-message {
+    font-size: 0.8rem;
+  }
+
   .rf-stat-number {
     font-size: 2.5rem;
     min-height: 2.5rem;
@@ -502,6 +657,33 @@ html {
 }
 
 @media (max-width: 480px) {
+  .rf-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+  }
+
+  .rf-notifications-container {
+    top: 0.5rem;
+    right: 0.5rem;
+    left: 0.5rem;
+  }
+
+  .rf-notification-content {
+    padding: 0.75rem 0.875rem;
+    gap: 0.5rem;
+  }
+
+  .rf-notification-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .rf-notification-close {
+    width: 20px;
+    height: 20px;
+    font-size: 16px;
+  }
+
   .rf-stat-number {
     font-size: 2rem;
     min-height: 2rem;
