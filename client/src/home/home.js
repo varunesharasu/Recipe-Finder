@@ -67,7 +67,7 @@ const Home = () => {
                 <polyline points="12,5 19,12 12,19" />
               </svg>
             </a>
-            <a href="/chatbot" className="rf-btn rf-btn-secondary rf-btn-lg">
+            <a href="/ChatbotWidget" className="rf-btn rf-btn-secondary rf-btn-lg">
               Ask Recipe AI
             </a>
           </div>
