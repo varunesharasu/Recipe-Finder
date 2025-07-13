@@ -16,9 +16,18 @@ const ChatbotWidget = () => {
     },
   ])
   const [loading, setLoading] = useState(false)
+  const [showSuggested, setShowSuggested] = useState(true)
   const messagesEndRef = useRef(null)
 
   const cohereApiKey = "xTlR3FdNSiqjNylPgWRKH2D087FHJQKvoxKzAziu"
+
+  const suggestedQuestions = [
+    "What can I cook with chicken and rice?",
+    "Suggest a vegetarian dinner recipe.",
+    "How do I make gluten-free pancakes?",
+    "What is a quick dessert recipe?",
+    "Give me a healthy breakfast idea.",
+  ]
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -28,13 +37,14 @@ const ChatbotWidget = () => {
     scrollToBottom()
   }, [chatLog])
 
-  const handleSend = async () => {
-    if (!input.trim() || loading) return
+  const handleSend = async (customInput) => {
+    const messageToSend = customInput !== undefined ? customInput : input
+    if (!messageToSend.trim() || loading) return
 
     const userMessage = {
       id: Date.now(),
       type: "user",
-      content: input,
+      content: messageToSend,
       timestamp: new Date(),
     }
 
@@ -47,7 +57,7 @@ const ChatbotWidget = () => {
         "https://api.cohere.ai/v1/generate",
         {
           model: "command-xlarge-nightly",
-          prompt: `User: ${input}\nBot:`,
+          prompt: `User: ${messageToSend}\nBot:`,
           max_tokens: 300,
           temperature: 0.7,
         },
@@ -79,6 +89,11 @@ const ChatbotWidget = () => {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleQuestionClick = (question) => {
+    setShowSuggested(false)
+    handleSend(question)
   }
 
   const handleKeyPress = (e) => {
@@ -118,6 +133,22 @@ const ChatbotWidget = () => {
                 </svg>
               </button>
             </div>
+
+            {/* Suggested Questions */}
+            {showSuggested && (
+              <div className="rf-suggested-questions">
+                {suggestedQuestions.map((q, idx) => (
+                  <button
+                    key={idx}
+                    className="rf-suggested-question-btn"
+                    onClick={() => handleQuestionClick(q)}
+                    disabled={loading}
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* Chat Messages */}
             <div className="rf-chatbot-messages">
