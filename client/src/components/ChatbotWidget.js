@@ -19,7 +19,7 @@ const ChatbotWidget = () => {
   const [showSuggested, setShowSuggested] = useState(true)
   const messagesEndRef = useRef(null)
 
-  const cohereApiKey = "xTlR3FdNSiqjNylPgWRKH2D087FHJQKvoxKzAziu"
+  const cohereApiKey = "015a68c9f707ba73306289e63b93e29d44a7d833952fe8947ce4d10ed5bb19b7"
 
   const suggestedQuestions = [
     "What can I cook with chicken and rice?",
@@ -62,17 +62,20 @@ const ChatbotWidget = () => {
 
     try {
       const response = await axios.post(
-        "https://api.cohere.ai/v1/generate",
+        "https://api.together.ai/v1/chat/completions",
         {
-          model: "command-xlarge-nightly",
-          prompt: `User: ${messageToSend}\nBot:`,
+          model: "mistralai/Mixtral-8x7B-Instruct-v0.1",
+          messages: [
+            { role: "system", content: "You are a helpful recipe assistant." },
+            { role: "user", content: messageToSend }
+          ],
           max_tokens: 300,
           temperature: 0.7,
         },
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${cohereApiKey}`,
+            "Authorization": `Bearer ${cohereApiKey}`,
           },
         },
       )
@@ -80,7 +83,7 @@ const ChatbotWidget = () => {
       const botMessage = {
         id: Date.now() + 1,
         type: "bot",
-        content: response.data.generations[0].text.trim(),
+        content: response.data.choices[0].message.content.trim(),
         timestamp: new Date(),
       }
 
