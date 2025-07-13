@@ -29,6 +29,14 @@ const ChatbotWidget = () => {
     "Give me a healthy breakfast idea.",
   ]
 
+  const suggestedAnswers = {
+    "What can I cook with chicken and rice?": "You can make Chicken Fried Rice, Chicken and Rice Casserole, or a simple Chicken Pilaf. Would you like a specific recipe?",
+    "Suggest a vegetarian dinner recipe.": "How about a Vegetable Stir-Fry, Chickpea Curry, or Stuffed Bell Peppers? Let me know if you want a detailed recipe.",
+    "How do I make gluten-free pancakes?": "Mix gluten-free flour, eggs, milk, baking powder, and a pinch of salt. Cook on a skillet until golden. Want a full recipe?",
+    "What is a quick dessert recipe?": "Try making Chocolate Mug Cake: mix flour, cocoa, sugar, milk, and microwave for 1 minute. Would you like the full recipe?",
+    "Give me a healthy breakfast idea.": "Overnight oats with fruits and nuts, Greek yogurt parfait, or avocado toast are great healthy breakfast options.",
+  }
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
@@ -78,11 +86,16 @@ const ChatbotWidget = () => {
 
       setChatLog((prev) => [...prev, botMessage])
     } catch (error) {
-      console.error("Error:", error.response ? error.response.data : error.message)
+      let botContent
+      if (suggestedAnswers[messageToSend]) {
+        botContent = suggestedAnswers[messageToSend]
+      } else {
+        botContent = "I'm experiencing some technical difficulties. Please try again later."
+      }
       const errorMessage = {
         id: Date.now() + 1,
         type: "bot",
-        content: "I'm experiencing some technical difficulties. Please try again later.",
+        content: botContent,
         timestamp: new Date(),
       }
       setChatLog((prev) => [...prev, errorMessage])
