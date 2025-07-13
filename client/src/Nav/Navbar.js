@@ -56,7 +56,7 @@ const NavBar = () => {
       <div className="rf-navbar-container">
         {/* Brand */}
         <a href="/" className="rf-navbar-brand">
-          <div className="rf-brand-icon">R</div>
+          <div className="rf-brand-icon">C</div>
           <span className="rf-brand-text">Recipe Finder</span>
         </a>
 
