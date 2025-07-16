@@ -399,30 +399,3 @@
   }
 }
 
-.rf-mobile-nav-link{ {
-    padding: 0.75rem 1rem;
-  }
-
-  .rf-mobile-user-info {
-    padding: 0.75rem 1rem;
-  }
-
-  .rf-mobile-logout {
-    padding: 0.75rem 1rem;
-  }
-
-  .rf-mobile-login {
-    padding: 0.75rem 1rem;
-  }
-}
-.rf-mobile-toggle {
-  display: block;
-  background: var(--rf-bg-card);
-  border: 1px solid var(--rf-border-light);
-  border-radius: var(--rf-radius-lg);
-  padding: 0.75rem;
-  color: var(--rf-text-primary);
-  cursor: pointer;
-  transition: all var(--rf-duration-normal) ease;
-  box-shadow: var(--rf-shadow-sm);
-}
